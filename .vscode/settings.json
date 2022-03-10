@@ -1,0 +1,59 @@
+{
+  "latex-workshop.bibtex-format.tab": "4 spaces",
+  "latex-workshop.latex.outDir": "./build",
+  "latex-workshop.docker.enabled": true,
+  "latex-workshop.docker.image.latex": "tianon/latex",
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "pdflatex → bibtex → pdflatex",
+      "tools": [
+        "bibtex",
+        "pdflatex"
+      ]
+    },
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "--shell-escape",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "pdflatex",
+      "command": "pdflatex",
+      "args": [
+        "--shell-escape",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-output-directory=%OUTDIR%",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": [
+        "%OUTDIR%/%DOCFILE%"
+      ],
+    },
+    {
+      "name": "makeglossaries",
+      "command": "makeglossaries",
+      "args": [
+        "-d%OUTDIR%",
+        "%DOCFILE%"
+      ]
+    }
+  ],
+  "liveServer.settings.port": 5501,
+  "stylelint.enable": false
+}
