@@ -17,7 +17,12 @@ jobs:
           working_directory: src
           root_file: index.tex
           args: -pdf -bibtex --shell-escape -file-line-error -halt-on-error -interaction=nonstopmode
+      - run: echo
+      - name: Rename Generated File
+        run: |
+          echo "${{ github.repository }}" | sed -r 's/\//-/g'
+          mv src/index.pdf src/index2.pdf
       - uses: actions/upload-artifact@v2
         with:
           name: PDF
-          path: index.pdf
+          path: src/index2.pdf
