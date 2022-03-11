@@ -20,9 +20,12 @@ jobs:
       - run: echo
       - name: Rename Generated File
         run: |
-          echo "${{ github.repository }}" | sed -r 's/\//-/g'
-          mv src/index.pdf src/index2.pdf
+          reponame=$(echo "${{ github.repository }}" | sed -r 's/\//-/g')
+          sha=$(printf "%.7s" "${{ github.sha }}" )
+          echo "filename=src/${name}_${sha}.pdf" >> $GITHUB_ENV
+
+          mv src/index.pdf "${{ env.filename }}"
       - uses: actions/upload-artifact@v2
         with:
-          name: PDF
-          path: src/index2.pdf
+          name: LaTeX to PDF
+          path: "src/${{ env.filename }}"
