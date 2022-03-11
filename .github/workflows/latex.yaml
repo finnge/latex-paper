@@ -17,12 +17,11 @@ jobs:
           working_directory: src
           root_file: index.tex
           args: -pdf -bibtex --shell-escape -file-line-error -halt-on-error -interaction=nonstopmode
-      - run: echo
       - name: Rename Generated File
         run: |
           reponame=$(echo "${{ github.repository }}" | sed -r 's/\//-/g')
           sha=$(printf "%.7s" "${{ github.sha }}" )
-          echo "filename=src/${name}_${sha}.pdf" >> $GITHUB_ENV
+          echo "filename=$(src/${name}_${sha}.pdf)" >> $GITHUB_ENV
 
           mv src/index.pdf "${{ env.filename }}"
       - uses: actions/upload-artifact@v2
