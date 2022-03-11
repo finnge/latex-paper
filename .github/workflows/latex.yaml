@@ -2,8 +2,6 @@ name: Build LaTeX document
 
 on:
   push:
-  release:
-    types: [published]
 
 jobs:
   build_latex:
@@ -58,12 +56,13 @@ jobs:
       - 
         name: Rename File
         run: mv ${{ needs.build_latex.outputs.filename }} ${{ env.filename_tag }}
-      -
-        name: Upload to release
-        uses: JasonEtco/upload-to-release@master
+      - 
+        name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          args: ${{ env.filename_tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.filename_tag }}
+          asset_name: ${{ env.filename_tag }}
+          tag: ${{ github.ref }}
         
 
