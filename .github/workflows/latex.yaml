@@ -21,7 +21,7 @@ jobs:
         run: |
           reponame=$(echo "${{ github.repository }}" | sed -r 's/\//-/g')
           sha=$(printf "%.7s" "${{ github.sha }}" )
-          echo "filename=$(src/${reponame}_${sha}.pdf)" >> $GITHUB_ENV
+          echo "filename=src/${reponame}_${sha}.pdf" >> $GITHUB_ENV
       - name: Rename Output File
         run: mv src/index.pdf "${{ env.filename }}"
       - uses: actions/upload-artifact@v2
