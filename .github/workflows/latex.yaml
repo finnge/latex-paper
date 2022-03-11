@@ -1,10 +1,15 @@
 name: Build LaTeX document
 
-on: ['push', 'release']
+on:
+  push:
+  release:
+    types: [published]
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    outputs:
+      filename: ${{ steps.gen_filename.outputs.filename }}
     steps:
       - 
         name: Set up Git repository
@@ -17,11 +22,14 @@ jobs:
           root_file: index.tex
           args: -pdf -bibtex --shell-escape -file-line-error -halt-on-error -interaction=nonstopmode
       - 
+        id: gen_filename
         name: Generate Filename
         run: |
           reponame=$(echo "${{ github.repository }}" | sed -r 's/\//-/g')
           sha=$(printf "%.7s" "${{ github.sha }}" )
-          echo "filename=${reponame}_${sha}.pdf" >> $GITHUB_ENV
+          FILENAME="${reponame}_${sha}.pdf"
+          echo "filename=${FILENAME}" >> $GITHUB_ENV
+          echo "::set-output name=filename::${FILENAME}"
       - 
         name: Rename Output File
         run: mv src/index.pdf "src/${{ env.filename }}"
@@ -36,9 +44,6 @@ jobs:
     needs: build_latex
     if: ${{ github.ref_type == 'tag' }}
     steps:
-      - 
-        name: Set up Git repository
-        uses: actions/checkout@v2
       -
         name: Download build
         uses: actions/download-artifact@v3
@@ -49,15 +54,15 @@ jobs:
         run: |
           reponame=$(echo "${{ github.repository }}" | sed -r 's/\//-/g')
           tag=$(echo "${{ github.ref }}" | sed -r 's/refs\/tags\///g')
-          echo "filename=${reponame}_${tag}.pdf" >> $GITHUB_ENV
+          echo "filename_tag=${reponame}_${tag}.pdf" >> $GITHUB_ENV
       - 
         name: Rename File
-        run: mv ${{ needs.build_latex.env.filename }} ${{ env.filename }}
+        run: mv ${{ needs.build_latex.outputs.filename }} ${{ env.filename_tag }}
       -
         name: Upload to release
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ${{ env.filename }}
+          args: ${{ env.filename_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
