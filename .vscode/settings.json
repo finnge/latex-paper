@@ -7,7 +7,7 @@
     {
       "name": "pdflatex → bibtex → pdflatex",
       "tools": [
-        "pdflatex",
+        "latexmk",
         "bibtex",
         "pdflatex"
       ]
