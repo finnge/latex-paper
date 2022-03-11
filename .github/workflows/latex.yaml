@@ -1,0 +1,30 @@
+name: Build LaTeX document
+
+on:
+  push:
+    branches:
+      - "feat-github-action"
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: src
+          root_file: index.tex
+          args: -pdf -bibtex --shell-escape -file-line-error -halt-on-error -interaction=nonstopmode
+      - name: Generate Filename
+        run: |
+          reponame=$(echo "${{ github.repository }}" | sed -r 's/\//-/g')
+          sha=$(printf "%.7s" "${{ github.sha }}" )
+          echo "filename=${reponame}_${sha}.pdf" >> $GITHUB_ENV
+      - name: Rename Output File
+        run: mv src/index.pdf "src/${{ env.filename }}"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: LaTeX to PDF
+          path: "src/${{ env.filename }}"
